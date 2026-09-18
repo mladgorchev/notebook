@@ -1,0 +1,13 @@
+/*
+Theme Name: Obsidian Notes
+Theme URI: https://github.com/mladgorchev/notebook
+Author: Mladen Gorchev
+Author URI: https://github.com/mladgorchev
+Description: A minimalist WordPress theme inspired by the Obsidian app interface. A note list sits on the left, the reading pane on the right, and switching between posts updates the content instantly without a full page reload. Includes a light/dark (black & white) mode toggle and a serif/sans font switcher (EB Garamond and a modern grotesk in the spirit of Anders Norén's typefaces).
+Version: 1.0.0
+Requires at least: 5.9
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: LICENSE
+Text Domain: obsidian-notes
+*/

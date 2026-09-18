@@ -1,0 +1,39 @@
+Obsidian Notes WordPress Theme, Copyright 2026 Mladen Gorchev
+Obsidian Notes is distributed under the terms of the GNU GPL.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+
+A copy of the full GPLv2 license text can be found at:
+https://www.gnu.org/licenses/gpl-2.0.html
+
+----------------------------------------------------------------------
+
+This theme bundles the following third-party works, each under a
+license compatible with the GPL:
+
+* React and ReactDOM (assets/js/react.production.min.js,
+  assets/js/react-dom.production.min.js)
+  Copyright (c) Meta Platforms, Inc. and affiliates.
+  Licensed under the MIT License — see assets/js/react-LICENSE.txt
+  and assets/js/react-dom-LICENSE.txt.
+
+* EB Garamond font (assets/fonts/eb-garamond/)
+  Licensed under the SIL Open Font License, Version 1.1 — see
+  assets/fonts/eb-garamond/LICENSE.txt.
+
+* Inter font (assets/fonts/inter/)
+  Copyright 2020 The Inter Project Authors.
+  Licensed under the SIL Open Font License, Version 1.1 — see
+  assets/fonts/inter/LICENSE.txt.

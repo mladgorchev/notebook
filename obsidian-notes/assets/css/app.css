@@ -1,0 +1,464 @@
+/* ==========================================================================
+   Obsidian Notes — app shell styles
+   A two-pane, editor-like layout: note list on the left, reading pane on
+   the right. Two color modes (dark / light, both strictly black & white)
+   and two font families (serif / sans) are toggled via CSS custom
+   properties set on the root element by assets/js/app.js.
+   ========================================================================== */
+
+:root {
+	--on-font-serif: 'EB Garamond', Georgia, 'Times New Roman', serif;
+	--on-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	--on-radius: 6px;
+	--on-sidebar-width: 300px;
+}
+
+/* Dark mode (default) — Obsidian's default palette, pure black/white/gray. */
+[data-on-theme='dark'] {
+	--on-bg: #1e1e1e;
+	--on-bg-elevated: #161616;
+	--on-bg-hover: #2a2a2a;
+	--on-bg-active: #333333;
+	--on-border: #333333;
+	--on-text: #dcdcdc;
+	--on-text-muted: #888888;
+	--on-text-faint: #5c5c5c;
+	--on-accent: #ffffff;
+	--on-accent-text: #000000;
+	--on-scrollbar: #3a3a3a;
+}
+
+/* Light mode — a plain black & white flip, not a separate colour scheme. */
+[data-on-theme='light'] {
+	--on-bg: #ffffff;
+	--on-bg-elevated: #f7f7f7;
+	--on-bg-hover: #ececec;
+	--on-bg-active: #e2e2e2;
+	--on-border: #dddddd;
+	--on-text: #1a1a1a;
+	--on-text-muted: #6e6e6e;
+	--on-text-faint: #a3a3a3;
+	--on-accent: #000000;
+	--on-accent-text: #ffffff;
+	--on-scrollbar: #cccccc;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	height: 100%;
+}
+
+body.obsidian-notes-body {
+	margin: 0;
+	background: var(--on-bg);
+	color: var(--on-text);
+	font-family: var(--on-font-sans);
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+}
+
+[data-on-font='serif'] {
+	--on-font-active: var(--on-font-serif);
+}
+
+[data-on-font='sans'] {
+	--on-font-active: var(--on-font-sans);
+}
+
+.obsidian-app {
+	display: flex;
+	height: 100vh;
+	overflow: hidden;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Sidebar                                                                 */
+/* ---------------------------------------------------------------------- */
+
+.on-sidebar {
+	width: var(--on-sidebar-width);
+	min-width: 220px;
+	max-width: 480px;
+	flex-shrink: 0;
+	display: flex;
+	flex-direction: column;
+	background: var(--on-bg-elevated);
+	border-right: 1px solid var(--on-border);
+}
+
+.on-sidebar__header {
+	padding: 16px 16px 10px;
+	border-bottom: 1px solid var(--on-border);
+}
+
+.on-sidebar__title {
+	margin: 0 0 10px;
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--on-text-muted);
+}
+
+.on-search {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	background: var(--on-bg);
+	border: 1px solid var(--on-border);
+	border-radius: var(--on-radius);
+	padding: 6px 10px;
+}
+
+.on-search input {
+	flex: 1;
+	background: transparent;
+	border: 0;
+	outline: none;
+	color: var(--on-text);
+	font-family: var(--on-font-active, var(--on-font-sans));
+	font-size: 13px;
+}
+
+.on-search input::placeholder {
+	color: var(--on-text-faint);
+}
+
+.on-note-list {
+	flex: 1;
+	overflow-y: auto;
+	padding: 6px;
+}
+
+.on-note-list::-webkit-scrollbar {
+	width: 8px;
+}
+
+.on-note-list::-webkit-scrollbar-thumb {
+	background: var(--on-scrollbar);
+	border-radius: 8px;
+}
+
+.on-note-item {
+	display: block;
+	width: 100%;
+	text-align: left;
+	background: transparent;
+	border: 0;
+	border-radius: var(--on-radius);
+	padding: 9px 10px;
+	margin-bottom: 2px;
+	cursor: pointer;
+	color: inherit;
+	font-family: inherit;
+}
+
+.on-note-item:hover {
+	background: var(--on-bg-hover);
+}
+
+.on-note-item.is-active {
+	background: var(--on-bg-active);
+}
+
+.on-note-item.is-active .on-note-item__title {
+	color: var(--on-accent);
+}
+
+.on-note-item__title {
+	display: block;
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--on-text);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.on-note-item__meta {
+	display: block;
+	margin-top: 3px;
+	font-size: 11.5px;
+	color: var(--on-text-faint);
+}
+
+.on-note-list__empty,
+.on-note-list__loading {
+	padding: 16px 10px;
+	color: var(--on-text-muted);
+	font-size: 13px;
+}
+
+.on-note-list__load-more {
+	display: block;
+	width: 100%;
+	margin-top: 6px;
+	padding: 8px;
+	background: transparent;
+	border: 1px dashed var(--on-border);
+	border-radius: var(--on-radius);
+	color: var(--on-text-muted);
+	font-size: 12px;
+	cursor: pointer;
+}
+
+.on-note-list__load-more:hover {
+	color: var(--on-text);
+	border-color: var(--on-text-muted);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Sidebar footer — theme & font switchers                                */
+/* ---------------------------------------------------------------------- */
+
+.on-sidebar__footer {
+	padding: 10px;
+	border-top: 1px solid var(--on-border);
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.on-toggle-group {
+	display: flex;
+	background: var(--on-bg);
+	border: 1px solid var(--on-border);
+	border-radius: var(--on-radius);
+	overflow: hidden;
+}
+
+.on-toggle-group button {
+	flex: 1;
+	padding: 7px 4px;
+	background: transparent;
+	border: 0;
+	color: var(--on-text-muted);
+	font-size: 12px;
+	font-family: inherit;
+	cursor: pointer;
+	border-left: 1px solid var(--on-border);
+}
+
+.on-toggle-group button:first-child {
+	border-left: 0;
+}
+
+.on-toggle-group button.is-active {
+	background: var(--on-accent);
+	color: var(--on-accent-text);
+	font-weight: 600;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Reading pane                                                            */
+/* ---------------------------------------------------------------------- */
+
+.on-reading-pane {
+	flex: 1;
+	min-width: 0;
+	overflow-y: auto;
+	background: var(--on-bg);
+}
+
+.on-reading-pane::-webkit-scrollbar {
+	width: 10px;
+}
+
+.on-reading-pane::-webkit-scrollbar-thumb {
+	background: var(--on-scrollbar);
+	border-radius: 8px;
+}
+
+.on-note {
+	max-width: 720px;
+	margin: 0 auto;
+	padding: 56px 40px 120px;
+	font-family: var(--on-font-active, var(--on-font-sans));
+}
+
+.on-note__title {
+	margin: 0 0 8px;
+	font-size: 36px;
+	line-height: 1.2;
+	font-weight: 700;
+	color: var(--on-text);
+}
+
+.on-note__meta {
+	margin: 0 0 36px;
+	color: var(--on-text-muted);
+	font-size: 13px;
+	display: flex;
+	gap: 12px;
+	flex-wrap: wrap;
+	border-bottom: 1px solid var(--on-border);
+	padding-bottom: 20px;
+}
+
+.on-note__body {
+	font-size: 17px;
+	line-height: 1.75;
+	color: var(--on-text);
+}
+
+.on-note__body p {
+	margin: 0 0 1.2em;
+}
+
+.on-note__body h1,
+.on-note__body h2,
+.on-note__body h3,
+.on-note__body h4 {
+	color: var(--on-text);
+	line-height: 1.3;
+	margin: 1.6em 0 0.6em;
+}
+
+.on-note__body a {
+	color: var(--on-text);
+	text-decoration: underline;
+	text-decoration-color: var(--on-text-faint);
+	text-underline-offset: 2px;
+}
+
+.on-note__body a:hover {
+	text-decoration-color: var(--on-text);
+}
+
+.on-note__body img {
+	max-width: 100%;
+	height: auto;
+	border-radius: var(--on-radius);
+}
+
+.on-note__body blockquote {
+	margin: 1.2em 0;
+	padding: 4px 0 4px 16px;
+	border-left: 3px solid var(--on-border);
+	color: var(--on-text-muted);
+	font-style: italic;
+}
+
+.on-note__body pre {
+	background: var(--on-bg-elevated);
+	border: 1px solid var(--on-border);
+	border-radius: var(--on-radius);
+	padding: 14px 16px;
+	overflow-x: auto;
+	font-size: 14px;
+}
+
+.on-note__body code {
+	background: var(--on-bg-elevated);
+	border-radius: 4px;
+	padding: 0.15em 0.4em;
+	font-size: 0.9em;
+}
+
+.on-note__body pre code {
+	background: none;
+	padding: 0;
+}
+
+.on-empty-state,
+.on-error-state {
+	max-width: 480px;
+	margin: 120px auto 0;
+	text-align: center;
+	color: var(--on-text-muted);
+	font-family: var(--on-font-active, var(--on-font-sans));
+	padding: 0 24px;
+}
+
+.on-empty-state h2,
+.on-error-state h2 {
+	color: var(--on-text);
+	font-weight: 600;
+	margin-bottom: 8px;
+}
+
+.on-skeleton {
+	max-width: 720px;
+	margin: 56px auto 0;
+	padding: 0 40px;
+}
+
+.on-skeleton__line {
+	height: 14px;
+	border-radius: 4px;
+	background: var(--on-bg-hover);
+	margin-bottom: 12px;
+	animation: on-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes on-pulse {
+	0%,
+	100% {
+		opacity: 0.6;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+/* ---------------------------------------------------------------------- */
+/* Mobile                                                                  */
+/* ---------------------------------------------------------------------- */
+
+.on-mobile-bar {
+	display: none;
+}
+
+@media (max-width: 780px) {
+	.obsidian-app {
+		position: relative;
+	}
+
+	.on-sidebar {
+		position: absolute;
+		inset: 0;
+		z-index: 20;
+		width: 100%;
+		max-width: none;
+		transform: translateX(-100%);
+		transition: transform 0.2s ease;
+	}
+
+	.on-sidebar.is-open {
+		transform: translateX(0);
+	}
+
+	.on-reading-pane {
+		width: 100%;
+	}
+
+	.on-mobile-bar {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		padding: 12px 16px;
+		border-bottom: 1px solid var(--on-border);
+		position: sticky;
+		top: 0;
+		background: var(--on-bg);
+		z-index: 10;
+	}
+
+	.on-mobile-bar button {
+		background: transparent;
+		border: 1px solid var(--on-border);
+		border-radius: var(--on-radius);
+		color: var(--on-text);
+		padding: 6px 10px;
+		font-size: 13px;
+		cursor: pointer;
+	}
+
+	.on-note {
+		padding: 24px 20px 80px;
+	}
+}
