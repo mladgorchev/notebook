@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0"
+	xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:wp="http://wordpress.org/export/1.2/"
+>
+<channel>
+	<title>Obsidian Notes Demo</title>
+	<link>http://localhost</link>
+	<description>Demo content for the Obsidian Notes theme</description>
+	<pubDate>Fri, 18 Sep 2026 00:00:00 +0000</pubDate>
+	<language>en-US</language>
+	<wp:wxr_version>1.2</wp:wxr_version>
+	<wp:base_site_url>http://localhost</wp:base_site_url>
+	<wp:base_blog_url>http://localhost</wp:base_blog_url>
+
+	<wp:author>
+		<wp:author_id>1</wp:author_id>
+		<wp:author_login><![CDATA[admin]]></wp:author_login>
+		<wp:author_email><![CDATA[admin@example.com]]></wp:author_email>
+		<wp:author_display_name><![CDATA[Admin]]></wp:author_display_name>
+	</wp:author>
+
+	<generator>https://wordpress.org/?v=6.6</generator>
+
+	<item>
+		<title>The Editor as Interface</title>
+		<link>http://localhost/the-editor-as-interface/</link>
+		<pubDate>Fri, 12 Sep 2026 09:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<guid isPermaLink="false">http://localhost/?p=101</guid>
+		<description></description>
+		<content:encoded><![CDATA[
+<p>Most blog themes borrow their layout from a magazine: a hero image up top, a grid of cards below. Note-taking apps borrow theirs from a filing cabinet — a list of documents on one side, the document itself on the other. That second shape turns out to be a better fit for a site meant to be <em>read through</em> rather than skimmed once.</p>
+
+<h2>Why the split view works</h2>
+
+<p>Keeping the list always visible does two things at once:</p>
+
+<ul>
+	<li>It shows the shape of the whole site, not just the one post you're on.</li>
+	<li>It removes the cost of going back — there's nothing to go back to, the list never left.</li>
+</ul>
+
+<blockquote><p>The interface should get out of the way of the ideas it's holding.</p></blockquote>
+
+<h2>What changes technically</h2>
+
+<p>Instead of full page loads between posts, the list and the reading pane are wired together with the REST API. Clicking an item in the list fetches just that post's content and swaps it in, while the browser's address bar and back button still behave normally.</p>
+
+<pre><code>fetch('/wp-json/wp/v2/posts?slug=' + slug)
+  .then(res => res.json())
+  .then(data => renderNote(data[0]));</code></pre>
+
+<p>Nothing here needs a framework-level router or a build step — it's a small amount of glue code around an API WordPress already exposes.</p>
+]]></content:encoded>
+		<excerpt:encoded><![CDATA[Why a note-list-and-reading-pane layout suits a blog better than a magazine grid, and what changes technically to make switching between posts instant.]]></excerpt:encoded>
+		<wp:post_id>101</wp:post_id>
+		<wp:post_date><![CDATA[2026-09-12 09:00:00]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[2026-09-12 09:00:00]]></wp:post_date_gmt>
+		<wp:comment_status><![CDATA[open]]></wp:comment_status>
+		<wp:ping_status><![CDATA[open]]></wp:ping_status>
+		<wp:post_name><![CDATA[the-editor-as-interface]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+		<wp:post_password><![CDATA[]]></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="category" nicename="design"><![CDATA[Design]]></category>
+	</item>
+
+	<item>
+		<title>On Building a Second Brain</title>
+		<link>http://localhost/on-building-a-second-brain/</link>
+		<pubDate>Sat, 6 Sep 2026 09:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<guid isPermaLink="false">http://localhost/?p=102</guid>
+		<description></description>
+		<content:encoded><![CDATA[
+<p>A personal knowledge base only earns its name if writing and reading happen in the same place, with the same friction — or lack of it. Most blogging setups separate the two: you write in one tool and read in another, and the gap between them is where good habits go to die.</p>
+
+<h2>Three things that kept notes alive for me</h2>
+
+<ol>
+	<li>Capture first, organize later.</li>
+	<li>Link liberally — a note that references three others is worth more than three notes that reference nothing.</li>
+	<li>Read your own notes the same way you'd read anyone else's.</li>
+</ol>
+
+<p>That third point is the one this theme is built around: the reading experience for your own posts should feel exactly as good as it does for someone discovering your site for the first time.</p>
+
+<h2>What this looks like in practice</h2>
+
+<p>A short list, browsed quickly, with the full piece one click away — no template that hides the rest of the archive behind a "read more" and a page reload.</p>
+]]></content:encoded>
+		<excerpt:encoded><![CDATA[Notes on why capture-first, link-liberally habits only stick when the writing and reading experience share the same interface.]]></excerpt:encoded>
+		<wp:post_id>102</wp:post_id>
+		<wp:post_date><![CDATA[2026-09-06 09:00:00]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[2026-09-06 09:00:00]]></wp:post_date_gmt>
+		<wp:comment_status><![CDATA[open]]></wp:comment_status>
+		<wp:ping_status><![CDATA[open]]></wp:ping_status>
+		<wp:post_name><![CDATA[on-building-a-second-brain]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+		<wp:post_password><![CDATA[]]></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="category" nicename="notes"><![CDATA[Notes]]></category>
+	</item>
+
+	<item>
+		<title>Why Plain Text Wins</title>
+		<link>http://localhost/why-plain-text-wins/</link>
+		<pubDate>Sun, 31 Aug 2026 09:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<guid isPermaLink="false">http://localhost/?p=103</guid>
+		<description></description>
+		<content:encoded><![CDATA[
+<p>Every few years a new format promises to replace plain text for writing, and every few years plain text quietly outlasts it. The reason isn't nostalgia — it's that plain text degrades gracefully. A markdown file opens in literally anything. A proprietary format opens in one thing, until that thing stops being maintained.</p>
+
+<blockquote><p>Durability is a feature you only notice by its absence.</p></blockquote>
+
+<p>None of this is an argument against rich formatting — this post has headings, a list, a quote — it's an argument for formats where the rich version degrades into something still readable.</p>
+
+<h2>A short table of what degrades well</h2>
+
+<p><strong>Markdown</strong> becomes readable plain text. <strong>HTML</strong> becomes readable plain text with some noise. A binary document format becomes nothing at all without the right software.</p>
+]]></content:encoded>
+		<excerpt:encoded><![CDATA[A short case for formats that degrade gracefully, and why plain text keeps outlasting whatever is supposed to replace it.]]></excerpt:encoded>
+		<wp:post_id>103</wp:post_id>
+		<wp:post_date><![CDATA[2026-08-31 09:00:00]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[2026-08-31 09:00:00]]></wp:post_date_gmt>
+		<wp:comment_status><![CDATA[open]]></wp:comment_status>
+		<wp:ping_status><![CDATA[open]]></wp:ping_status>
+		<wp:post_name><![CDATA[why-plain-text-wins]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+		<wp:post_password><![CDATA[]]></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="category" nicename="writing"><![CDATA[Writing]]></category>
+	</item>
+
+	<item>
+		<title>Linking Ideas Together</title>
+		<link>http://localhost/linking-ideas-together/</link>
+		<pubDate>Mon, 25 Aug 2026 09:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<guid isPermaLink="false">http://localhost/?p=104</guid>
+		<description></description>
+		<content:encoded><![CDATA[
+<p>The most useful thing a note can do is point at another note. A single idea, isolated, is a fact. Two ideas, linked, are the beginning of an argument.</p>
+
+<h2>Backlinks without the tooling</h2>
+
+<p>You don't need dedicated backlinking software to get most of the benefit — a habit of linking forward, consistently, gets you 90% of the way there. The other 10% is a "related posts" list, which this theme intentionally leaves out in favor of just... browsing the list on the left.</p>
+
+<p><a href="#">A link styled the way this theme treats links</a> — underlined, understated, colored the same as the surrounding text so it reads as part of the sentence rather than an interruption.</p>
+]]></content:encoded>
+		<excerpt:encoded><![CDATA[On why linking forward, consistently, gets you most of the value of a dedicated backlinking system without any of the tooling.]]></excerpt:encoded>
+		<wp:post_id>104</wp:post_id>
+		<wp:post_date><![CDATA[2026-08-25 09:00:00]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[2026-08-25 09:00:00]]></wp:post_date_gmt>
+		<wp:comment_status><![CDATA[open]]></wp:comment_status>
+		<wp:ping_status><![CDATA[open]]></wp:ping_status>
+		<wp:post_name><![CDATA[linking-ideas-together]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+		<wp:post_password><![CDATA[]]></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="category" nicename="notes"><![CDATA[Notes]]></category>
+	</item>
+
+	<item>
+		<title>Slow Publishing</title>
+		<link>http://localhost/slow-publishing/</link>
+		<pubDate>Sun, 3 Aug 2026 09:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<guid isPermaLink="false">http://localhost/?p=105</guid>
+		<description></description>
+		<content:encoded><![CDATA[
+<p>Not every post needs a date-driven feed pushing it past you the moment something newer gets published. Some are worth keeping one click away indefinitely, which is really just a description of what a sidebar is for.</p>
+
+<p>This is a short one — a reminder that not every note needs to argue a whole thesis to earn a place in the list.</p>
+]]></content:encoded>
+		<excerpt:encoded><![CDATA[A short note on writing things that don't need a whole thesis to earn a place in the archive.]]></excerpt:encoded>
+		<wp:post_id>105</wp:post_id>
+		<wp:post_date><![CDATA[2026-08-03 09:00:00]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[2026-08-03 09:00:00]]></wp:post_date_gmt>
+		<wp:comment_status><![CDATA[open]]></wp:comment_status>
+		<wp:ping_status><![CDATA[open]]></wp:ping_status>
+		<wp:post_name><![CDATA[slow-publishing]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+		<wp:post_password><![CDATA[]]></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="category" nicename="writing"><![CDATA[Writing]]></category>
+	</item>
+
+	<item>
+		<title>Designing for Focus</title>
+		<link>http://localhost/designing-for-focus/</link>
+		<pubDate>Tue, 29 Jul 2026 09:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<guid isPermaLink="false">http://localhost/?p=106</guid>
+		<description></description>
+		<content:encoded><![CDATA[
+<p>A reading interface has exactly one job: get out of the way of the text. Everything this theme leaves out — comment counts up top, social share bars, related-post carousels — was left out for that reason, not because it's hard to build.</p>
+
+<h2>What stayed</h2>
+
+<ul>
+	<li>A title, a date, a reading-time estimate — nothing more in the metadata row.</li>
+	<li>A content column capped at a comfortable reading width.</li>
+	<li>Two typefaces, chosen for long-form reading rather than headline impact.</li>
+</ul>
+
+<h2>What a black-and-white palette buys you</h2>
+
+<p>Constraining color to black, white, and a handful of grays removes an entire axis of decisions — no palette to coordinate, no accent color fighting with post content, no chart or image ever looking mismatched against the theme.</p>
+]]></content:encoded>
+		<excerpt:encoded><![CDATA[What this theme deliberately leaves out, and why constraining the palette to black, white, and gray removes a whole category of design decisions.]]></excerpt:encoded>
+		<wp:post_id>106</wp:post_id>
+		<wp:post_date><![CDATA[2026-07-29 09:00:00]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[2026-07-29 09:00:00]]></wp:post_date_gmt>
+		<wp:comment_status><![CDATA[open]]></wp:comment_status>
+		<wp:ping_status><![CDATA[open]]></wp:ping_status>
+		<wp:post_name><![CDATA[designing-for-focus]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+		<wp:post_password><![CDATA[]]></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="category" nicename="design"><![CDATA[Design]]></category>
+	</item>
+
+</channel>
+</rss>
