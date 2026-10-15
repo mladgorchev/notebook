@@ -17,7 +17,6 @@ const { entry, all, older, newer } = Astro.props;
 const { data } = entry;
 const { Content } = await render(entry);
 const teacher = data.teacher ? await getEntry(data.teacher) : undefined;
-const url = new URL(`/${entry.id}/`, Astro.site).href;
 
 // Sidebar: more by the same teacher first, then the latest translations.
 const others = all.filter((t) => t.id !== entry.id);
@@ -36,6 +35,7 @@ const moreNames = new Map(
 				<span class="kicker">
 					<a href="/prevodi/">Превод</a>
 					{data.tradition && <><span class="sep">|</span><span data-pagefind-filter="традиция">{data.tradition}</span></>}
+					{data.original_language && <><span class="sep">|</span>от {data.original_language.toLowerCase()}</>}
 				</span>
 				<h1 data-pagefind-meta="title">{data.title}</h1>
 				{data.subtitle && <p class="subtitle">{data.subtitle}</p>}
@@ -52,38 +52,35 @@ const moreNames = new Map(
 			)}
 
 			<div class="article-body">
-				<aside class="meta-side" data-pagefind-ignore>
-					<div class="tools">
-						<button type="button" data-size="-1" aria-label="По-малък текст">А−</button>
-						<button type="button" data-size="1" aria-label="По-голям текст">А+</button>
-						<button type="button" data-font aria-pressed="false" aria-label="Шрифт без серифи">Аа</button>
-					</div>
-					<dl class="facts">
-						{teacher && <div><dt>Учител</dt><dd><a href={`/uchiteli/${teacher.id}/`}>{teacher.data.name}</a></dd></div>}
-						<div><dt>Превод</dt><dd>{data.translator}</dd></div>
-						{data.tradition && <div><dt>Традиция</dt><dd>{data.tradition}</dd></div>}
-						{data.original_language && <div><dt>Оригинал</dt><dd>{data.original_language}</dd></div>}
-						{data.source && <div><dt>Източник</dt><dd><a href={data.source} rel="noopener">{new URL(data.source).hostname}</a></dd></div>}
-						<div><dt>Публикуван</dt><dd>{formatDate(data.date)}</dd></div>
-						{data.tags.length > 0 && (
-							<div><dt>Теми</dt><dd>{data.tags.map((tag) => <a href={`/temi/${slugify(tag)}/`}>{tag}</a>)}</dd></div>
-						)}
-					</dl>
-				</aside>
+				<div class="tools" data-pagefind-ignore>
+					<button type="button" data-size="1" aria-label="По-голям текст">А+</button>
+					<button type="button" data-size="-1" aria-label="По-малък текст">А−</button>
+					<button type="button" data-font aria-pressed="false" aria-label="Шрифт без серифи">Аа</button>
+				</div>
 
 				<div>
 					<div class="prose dropcap" id="prose">
 						<Content />
 					</div>
-					<p class="cite" data-pagefind-ignore>
-						<span class="label">Как да цитирате</span>
-						{teacher && `${teacher.data.name}, `}<i>„{data.title}“</i>, прев. {data.translator}. Дхарма Слово, {formatDate(data.date)} {url}
-					</p>
+
+					<dl class="source-box" data-pagefind-ignore>
+						<div><dt>Превод</dt><dd>{data.translator}</dd></div>
+						{teacher && <div><dt>Автор</dt><dd><a href={`/uchiteli/${teacher.id}/`}>{teacher.data.name}</a></dd></div>}
+						{data.original_language && <div><dt>Оригинал</dt><dd>{data.original_language}</dd></div>}
+						<div><dt>Публикуван</dt><dd>{formatDate(data.date)}</dd></div>
+						{data.source && <div><dt>Източник</dt><dd><a href={data.source} rel="noopener">{new URL(data.source).hostname}</a></dd></div>}
+					</dl>
+
+					{data.tags.length > 0 && (
+						<div class="article-tags" data-pagefind-ignore>
+							{data.tags.map((tag) => <a class="tag" href={`/temi/${slugify(tag)}/`}>{tag}</a>)}
+						</div>
+					)}
 				</div>
 
 				<aside class="sidebar" data-pagefind-ignore>
 					<h2>Още преводи</h2>
-					<span class="label">{sameTeacher.length > 0 && teacher ? `Още от ${teacher.data.name}` : 'Последно публикувани'}</span>
+					<p class="sidebar-sub">{sameTeacher.length > 0 && teacher ? `Още от ${teacher.data.name}` : 'Последно публикувани'}</p>
 					<ol class="numbered">
 						{more.map((t) => (
 							<li>
@@ -103,13 +100,13 @@ const moreNames = new Map(
 		<nav class="prev-next" aria-label="Други преводи">
 			{older && (
 				<a class="panel" href={`/${older.id}/`}>
-					<span class="label">‹ По-стар превод</span>
+					<span>‹ По-стар превод</span>
 					<strong>{older.data.title}</strong>
 				</a>
 			)}
 			{newer && (
 				<a class="panel next" href={`/${newer.id}/`}>
-					<span class="label">По-нов превод ›</span>
+					<span>По-нов превод ›</span>
 					<strong>{newer.data.title}</strong>
 				</a>
 			)}

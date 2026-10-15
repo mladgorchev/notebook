@@ -1,6 +1,5 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import Cover from './Cover.astro';
 
 interface Props {
 	teacher: CollectionEntry<'teachers'>;
@@ -9,11 +8,10 @@ interface Props {
 const { teacher, count } = Astro.props;
 const { data } = teacher;
 ---
-<a class="person panel" href={`/uchiteli/${teacher.id}/`}>
-	<Cover tradition={data.tradition} image={data.portrait} initial={data.name.charAt(0)} />
-	<div>
-		<h3>{data.name}{count !== undefined && <small>({count})</small>}</h3>
-		<span class="label">{[data.dates, data.tradition].filter(Boolean).join(' · ')}</span>
-		<p>{data.summary}</p>
-	</div>
+<a class="teacher panel" href={`/uchiteli/${teacher.id}/`}>
+	{data.tradition && <span class="kicker">{data.tradition}</span>}
+	<h3>{data.name}</h3>
+	<span class="date">
+		{data.dates}{count !== undefined && ` · ${count} ${count === 1 ? 'превод' : 'превода'}`}
+	</span>
 </a>

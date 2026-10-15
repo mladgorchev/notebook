@@ -21,6 +21,6 @@ const { tag, entries } = Astro.props;
 			<h1>{tag}</h1>
 			<p>{entries.length} {entries.length === 1 ? 'превод' : 'превода'} по тази тема.</p>
 		</header>
-		<div class="cards" style="margin-top:20px">{entries.map((entry) => <Story entry={entry} variant="card" />)}</div>
+		<div class="rows" style="margin-top:20px">{entries.map((entry) => <Story entry={entry} variant="row" />)}</div>
 	</div>
 </Base>

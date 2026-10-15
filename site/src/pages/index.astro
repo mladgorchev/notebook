@@ -2,8 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Story from '../components/Story.astro';
-import Icon from '../components/Icon.astro';
-import { getTranslations, pigments, slugify } from '../lib/utils';
+import { getTranslations, slugify } from '../lib/utils';
 import { verses } from '../data/verses';
 
 const translations = await getTranslations();
@@ -11,7 +10,7 @@ const featured = translations.find((t) => t.data.featured) ?? translations[0];
 const rest = translations.filter((t) => t !== featured);
 const seconds = rest.slice(0, 2);
 const headlines = rest.slice(2, 6);
-const recent = translations.slice(0, 5);
+const rows = rest.slice(0, 5);
 const teachers = (await getCollection('teachers')).sort((a, b) => a.data.name.localeCompare(b.data.name, 'bg'));
 const count = (id: string) => translations.filter((t) => t.data.teacher?.id === id).length;
 
@@ -19,13 +18,6 @@ const tagCounts = new Map<string, number>();
 translations.forEach((t) => t.data.tags.forEach((tag) => tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1)));
 const tags = [...tagCounts].sort((a, b) => b[1] - a[1]).slice(0, 16);
 const verse = verses[0];
-
-const tiles = [
-	{ href: '/prevodi/', title: 'Преводи', icon: 'book', n: translations.length, label: 'текста', hue: pigments.cinnabar },
-	{ href: '/uchiteli/', title: 'Учители', icon: 'person', n: teachers.length, label: 'учители и автори', hue: pigments.ochre },
-	{ href: '/temi/', title: 'Теми', icon: 'tag', n: tagCounts.size, label: 'теми', hue: pigments.lapis },
-	{ href: '/tarsene/', title: 'Търсене', icon: 'search', n: null, label: 'в пълния текст на всички преводи', hue: pigments.malachite },
-] as const;
 ---
 <Base>
 	<div class="wrap">
@@ -42,60 +34,43 @@ const tiles = [
 			</aside>
 		</section>
 
-		<nav class="tiles" aria-label="Разгледайте">
-			{tiles.map((t) => (
-				<a class="tile panel" href={t.href}>
-					<span class="tile-head">
-						<span class="icon"><Icon name={t.icon} size={15} /></span>
-						<h3>{t.title}</h3>
-						<span class="chev"><Icon name="chevron" size={16} /></span>
-					</span>
-					<span class="tile-body" style={`--hue: ${t.hue}`}>
-						{t.n !== null && <strong>{t.n}</strong>}
-						<span>{t.label}</span>
-					</span>
-				</a>
-			))}
-		</nav>
-
 		<section class="verse-row">
-			<figure class="verse" id="verse" data-verses={JSON.stringify(verses)}>
+			<figure class="verse" id="verse" style="margin:0" data-verses={JSON.stringify(verses)}>
 				<span class="verse-tab">Стих на деня</span>
+				<span class="verse-mark" aria-hidden="true">“</span>
 				<blockquote>{verse.text}</blockquote>
 				<figcaption>– <a href={verse.href}>{verse.source}</a></figcaption>
 			</figure>
 			<aside class="side-box panel">
 				<h2>Учители</h2>
-				<span class="label">Автори на преведените текстове</span>
+				<span class="date">Автори на преведените текстове</span>
 				<ul class="side-list">
 					{teachers.slice(0, 5).map((t) => (
 						<li>
 							<a href={`/uchiteli/${t.id}/`}>
 								<strong>{t.data.name}</strong>
-								<span>{t.data.dates} · {count(t.id)} {count(t.id) === 1 ? 'превод' : 'превода'}</span>
+								<span>{t.data.tradition} · {count(t.id)} {count(t.id) === 1 ? 'превод' : 'превода'}</span>
 							</a>
 						</li>
 					))}
 				</ul>
 				<a class="btn" href="/uchiteli/">Всички учители</a>
+				<a class="btn btn-solid" href="/temi/">Разгледай по тема</a>
 			</aside>
 		</section>
 
-		<div class="section-head">
-			<h2>Последни преводи</h2>
-			<a class="see-all" href="/prevodi/">Всички преводи <span class="dot"><Icon name="chevron" size={12} /></span></a>
+		<h2 class="section-title">Преводи</h2>
+		<p class="section-sub">Сутри, учения и коментари, преведени на български</p>
+		<div class="rows">
+			{rows.map((entry) => <Story entry={entry} variant="row" />)}
 		</div>
-		<div class="cards">
-			{recent.map((entry) => <Story entry={entry} variant="card" />)}
-		</div>
-		<div class="btn-row"><a class="btn btn-solid" href="/prevodi/">Всички преводи ›</a></div>
+		<div class="btn-row"><a class="btn btn-plum" href="/prevodi/">Всички преводи</a></div>
 
-		<div class="section-head">
-			<h2>Теми</h2>
-			<a class="see-all" href="/temi/">Всички теми <span class="dot"><Icon name="chevron" size={12} /></span></a>
-		</div>
+		<hr class="section-rule" />
+		<h2 class="section-title">Теми</h2>
+		<p class="section-sub">Разгледайте преводите по тема</p>
 		<div class="topic-list panel">
-			{tags.map(([tag, n]) => <a class="topic" href={`/temi/${slugify(tag)}/`}>{tag}<span class="count">{n}</span></a>)}
+			{tags.map(([tag, n]) => <a href={`/temi/${slugify(tag)}/`}>{tag}<span class="count">{n}</span></a>)}
 		</div>
 	</div>
 </Base>

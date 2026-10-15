@@ -23,8 +23,9 @@ for (const t of teachers) {
 		</header>
 		{[...byTradition].map(([tradition, list]) => (
 			<section>
-				<div class="section-head"><h2>{tradition}</h2></div>
-				<div class="people">
+				<h2 class="section-title" style="font-size:2rem;padding-top:36px">{tradition}</h2>
+				<p class="section-sub"></p>
+				<div class="teacher-grid">
 					{list.map((t) => <TeacherCard teacher={t} count={count(t.id)} />)}
 				</div>
 			</section>

@@ -50,35 +50,3 @@ export function excerptOf(entry: Translation, length = 180): string {
 		.trim();
 	return plain.length > length ? plain.slice(0, length).replace(/\s+\S*$/, '') + '…' : plain;
 }
-
-const relative = new Intl.RelativeTimeFormat('bg-BG', { numeric: 'auto' });
-
-// "преди 3 дни" for recent dates, the full date for anything older than a month.
-export function publishedLabel(date: Date, now = new Date()): string {
-	const days = Math.round((date.getTime() - now.getTime()) / 86400000);
-	if (days > -1) return 'днес';
-	if (days > -7) return relative.format(days, 'day');
-	if (days > -31) return relative.format(Math.round(days / 7), 'week');
-	return formatDate(date);
-}
-
-// Flat pigment colours used for covers when a text has no image.
-export const pigments = {
-	ochre: '#b0711d',
-	cinnabar: '#a8321f',
-	lapis: '#2a4a78',
-	malachite: '#3f6b52',
-	umber: '#5e4a3a',
-};
-
-const traditionPigment: Record<string, string> = {
-	'Тхеравада': pigments.ochre,
-	'Ранен будизъм': pigments.ochre,
-	'Махаяна': pigments.cinnabar,
-	'Ваджраяна': pigments.lapis,
-	'Дзен': pigments.malachite,
-};
-
-export function pigmentFor(tradition?: string): string {
-	return (tradition && traditionPigment[tradition]) || pigments.umber;
-}

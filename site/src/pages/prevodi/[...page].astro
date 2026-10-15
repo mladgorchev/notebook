@@ -18,8 +18,8 @@ const { page } = Astro.props as { page: Page<Translation> };
 			<h1>Преводи</h1>
 			<p>{page.total} текста, подредени от най-новия. Разгледайте ги и по <a href="/uchiteli/">учител</a> или по <a href="/temi/">тема</a>.</p>
 		</header>
-		<div class="cards" style="margin-top:20px">
-			{page.data.map((entry) => <Story entry={entry} variant="card" />)}
+		<div class="rows" style="margin-top:20px">
+			{page.data.map((entry) => <Story entry={entry} variant="row" />)}
 		</div>
 		<Pagination current={page.currentPage} last={page.lastPage} base="/prevodi/" />
 	</div>
