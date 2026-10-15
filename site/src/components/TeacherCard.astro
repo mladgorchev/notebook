@@ -8,17 +8,10 @@ interface Props {
 const { teacher, count } = Astro.props;
 const { data } = teacher;
 ---
-<a class="teacher" href={`/uchiteli/${teacher.id}/`}>
-	<span class="avatar">
-		{data.portrait ? <img src={data.portrait} alt="" loading="lazy" /> : data.name.charAt(0)}
-	</span>
-	<span>
-		<h3>{data.name}</h3>
-		<span class="meta">
-			{data.dates && <span>{data.dates}</span>}
-			{data.tradition && <span class="dot" />}
-			{data.tradition && <span>{data.tradition}</span>}
-		</span>
-		{count !== undefined && <span class="meta">{count} {count === 1 ? 'превод' : 'превода'}</span>}
+<a class="teacher panel" href={`/uchiteli/${teacher.id}/`}>
+	{data.tradition && <span class="kicker">{data.tradition}</span>}
+	<h3>{data.name}</h3>
+	<span class="date">
+		{data.dates}{count !== undefined && ` · ${count} ${count === 1 ? 'превод' : 'превода'}`}
 	</span>
 </a>

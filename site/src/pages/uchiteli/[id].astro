@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import TranslationCard from '../../components/TranslationCard.astro';
+import Story from '../../components/Story.astro';
 import { getTranslations } from '../../lib/utils';
 
 export async function getStaticPaths() {
@@ -16,29 +16,26 @@ const works = (await getTranslations()).filter((t) => t.data.teacher?.id === tea
 ---
 <Base title={data.name} description={data.summary}>
 	<div class="wrap">
-		<header class="page-head" style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
-			<span class="avatar" style="width:96px;height:96px;font-size:2.6rem">
-				{data.portrait ? <img src={data.portrait} alt="" /> : data.name.charAt(0)}
-			</span>
-			<div>
-				<span class="eyebrow">{data.tradition}</span>
+		<article class="bio panel">
+			<header class="bio-head">
+				<span class="kicker">
+					<a href="/uchiteli/">Учители</a>
+					{data.tradition && <><span class="sep">|</span>{data.tradition}</>}
+				</span>
 				<h1>{data.name}</h1>
-				<div class="pill-row">
-					{data.dates && <span class="pill pill-saffron">{data.dates}</span>}
-					{data.region && <span class="pill">{data.region}</span>}
-					<span class="pill">{works.length} {works.length === 1 ? 'превод' : 'превода'}</span>
-				</div>
+				<span class="date">{[data.dates, data.region].filter(Boolean).join(' · ')}</span>
+			</header>
+			<div class="prose">
+				<p class="lede">{data.summary}</p>
+				<Content />
 			</div>
-		</header>
-		<div class="prose" style="margin:0">
-			<p><strong>{data.summary}</strong></p>
-			<Content />
-		</div>
+		</article>
 		{works.length > 0 && (
-			<section class="section">
-				<div class="section-head"><h2>Преведени текстове</h2></div>
-				<div class="grid">{works.map((entry) => <TranslationCard entry={entry} />)}</div>
-			</section>
+			<>
+				<h2 class="section-title">Преведени текстове</h2>
+				<p class="section-sub">{works.length} {works.length === 1 ? 'превод' : 'превода'}</p>
+				<div class="rows">{works.map((entry) => <Story entry={entry} variant="row" />)}</div>
+			</>
 		)}
 	</div>
 </Base>

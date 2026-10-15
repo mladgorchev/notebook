@@ -8,13 +8,13 @@ const tags = [...counts].sort((a, b) => a[0].localeCompare(b[0], 'bg'));
 ---
 <Base title="Теми">
 	<div class="wrap">
-		<header class="page-head">
-			<span class="eyebrow">Указател</span>
+		<header class="page-head panel">
+			<span class="kicker">Указател</span>
 			<h1>Теми</h1>
 			<p>Всички теми, по които са подредени преводите.</p>
 		</header>
-		<div class="panel pill-row">
-			{tags.map(([tag, n]) => <a class="pill" href={`/temi/${slugify(tag)}/`}>{tag} <span class="count">{n}</span></a>)}
+		<div class="topic-list panel" style="margin-top:20px">
+			{tags.map(([tag, n]) => <a href={`/temi/${slugify(tag)}/`}>{tag}<span class="count">{n}</span></a>)}
 		</div>
 	</div>
 </Base>

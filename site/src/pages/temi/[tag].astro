@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import TranslationCard from '../../components/TranslationCard.astro';
+import Story from '../../components/Story.astro';
 import { getTranslations, slugify } from '../../lib/utils';
 
 export async function getStaticPaths() {
@@ -16,11 +16,11 @@ const { tag, entries } = Astro.props;
 ---
 <Base title={tag}>
 	<div class="wrap">
-		<header class="page-head">
-			<a class="eyebrow" href="/temi/" style="text-decoration:none">Теми</a>
+		<header class="page-head panel">
+			<a class="kicker" href="/temi/">Теми</a>
 			<h1>{tag}</h1>
 			<p>{entries.length} {entries.length === 1 ? 'превод' : 'превода'} по тази тема.</p>
 		</header>
-		<div class="grid">{entries.map((entry) => <TranslationCard entry={entry} />)}</div>
+		<div class="rows" style="margin-top:20px">{entries.map((entry) => <Story entry={entry} variant="row" />)}</div>
 	</div>
 </Base>

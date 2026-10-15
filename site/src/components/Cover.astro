@@ -1,30 +1,21 @@
 ---
-// A text's cover image, or a generated tinted panel when it has none.
+// A text's cover image, or a flat panel in the tradition's colour with an emblem.
+import Icon from './Icon.astro';
+
 interface Props {
-	title: string;
 	tradition?: string;
 	image?: string;
-	class?: string;
 }
-const { title, tradition, image, class: className } = Astro.props;
+const { tradition, image } = Astro.props;
 
 const hues: Record<string, string> = {
-	'Тхеравада': '#b0681f',
-	'Махаяна': '#8b2e1e',
-	'Ваджраяна': '#34506f',
-	'Дзен': '#4d6148',
+	'Тхеравада': '#b8611c',
+	'Махаяна': '#801c4a',
+	'Ваджраяна': '#21409a',
+	'Дзен': '#006176',
 };
-const hue = (tradition && hues[tradition]) || '#6e5a45';
-const glyph = title.replace(/^[^\p{L}]+/u, '').charAt(0);
+const hue = (tradition && hues[tradition]) || '#5a4a3f';
 ---
-<div class:list={['cover', className]} style={`--hue: ${hue}`}>
-	{image ? (
-		<img src={image} alt="" loading="lazy" />
-	) : (
-		<>
-			<span class="cover-ring" />
-			<span class="cover-ring" />
-			<span class="cover-glyph" aria-hidden="true">{glyph}</span>
-		</>
-	)}
+<div class="cover" style={`--hue: ${hue}`}>
+	{image ? <img src={image} alt="" loading="lazy" /> : <Icon name="wheel" size={64} />}
 </div>

@@ -1,6 +1,4 @@
 ---
-import Icon from './Icon.astro';
-
 interface Props {
 	current: number;
 	last: number;
@@ -18,18 +16,14 @@ for (let n = 1; n <= last; n++) {
 ---
 {last > 1 && (
 	<nav class="pagination" aria-label="Страници">
-		<a class="btn" href={current > 1 ? href(current - 1) : undefined} aria-disabled={current === 1 ? 'true' : undefined}>
-			<Icon name="arrow-left" size={16} /> Назад
-		</a>
+		<a class="btn" href={current > 1 ? href(current - 1) : undefined} aria-disabled={current === 1 ? 'true' : undefined}>‹ Назад</a>
 		{pages.map((p) =>
 			p === '…' ? (
-				<span class="muted">…</span>
+				<span class="gap">…</span>
 			) : (
 				<a class="btn" href={href(p)} aria-current={p === current ? 'page' : undefined}>{p}</a>
 			)
 		)}
-		<a class="btn" href={current < last ? href(current + 1) : undefined} aria-disabled={current === last ? 'true' : undefined}>
-			Напред <Icon name="arrow-right" size={16} />
-		</a>
+		<a class="btn" href={current < last ? href(current + 1) : undefined} aria-disabled={current === last ? 'true' : undefined}>Напред ›</a>
 	</nav>
 )}

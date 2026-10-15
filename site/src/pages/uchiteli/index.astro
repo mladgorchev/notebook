@@ -16,14 +16,15 @@ for (const t of teachers) {
 ---
 <Base title="Учители" description="Учителите и авторите, чиито текстове са преведени в Дхарма Слово.">
 	<div class="wrap">
-		<header class="page-head">
-			<span class="eyebrow">Животописи</span>
-			<h1>Учители и автори</h1>
-			<p>Кратки животописи на учителите, чиито думи са преведени тук, подредени по традиция.</p>
+		<header class="page-head panel">
+			<span class="kicker">Животописи</span>
+			<h1>Учители</h1>
+			<p>Учителите и авторите, чиито думи са преведени тук, подредени по традиция.</p>
 		</header>
 		{[...byTradition].map(([tradition, list]) => (
-			<section class="section" style="padding-top:0">
-				<div class="section-head"><h2>{tradition}</h2></div>
+			<section>
+				<h2 class="section-title" style="font-size:2rem;padding-top:36px">{tradition}</h2>
+				<p class="section-sub"></p>
 				<div class="teacher-grid">
 					{list.map((t) => <TeacherCard teacher={t} count={count(t.id)} />)}
 				</div>

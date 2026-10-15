@@ -1,0 +1,56 @@
+---
+// One translation shown in one of the editorial layouts used across the site.
+import { getEntry } from 'astro:content';
+import Cover from './Cover.astro';
+import { excerptOf, formatDate, type Translation } from '../lib/utils';
+
+interface Props {
+	entry: Translation;
+	variant: 'lead' | 'second' | 'headline' | 'row';
+}
+const { entry, variant } = Astro.props;
+const { data } = entry;
+const teacher = data.teacher ? await getEntry(data.teacher) : undefined;
+const href = `/${entry.id}/`;
+const by = teacher ? teacher.data.name : undefined;
+---
+{variant === 'lead' && (
+	<a class="lead-story" href={href}>
+		<Cover tradition={data.tradition} image={data.cover} />
+		<div class="story-text">
+			{data.tradition && <span class="kicker">{data.tradition}</span>}
+			<h2>{data.title}</h2>
+			<p>{excerptOf(entry, 200)}</p>
+			{by && <span class="byline">{by}</span>}
+		</div>
+	</a>
+)}
+{variant === 'second' && (
+	<a class="second-story" href={href}>
+		<Cover tradition={data.tradition} image={data.cover} />
+		<h3>{data.title}</h3>
+		{by && <span class="byline">{by}</span>}
+	</a>
+)}
+{variant === 'headline' && (
+	<a class="headline" href={href}>
+		{data.tradition && <span class="kicker">{data.tradition}</span>}
+		<h3>{data.title}</h3>
+		{by && <span class="byline">{by}</span>}
+	</a>
+)}
+{variant === 'row' && (
+	<a class="row-story panel" href={href}>
+		<div class="row-label">
+			{data.tradition && <span class="kicker">{data.tradition}</span>}
+			{data.tags.slice(0, 3).join(', ')}
+		</div>
+		<Cover tradition={data.tradition} image={data.cover} />
+		<div>
+			<h3>{data.title}</h3>
+			<p>{excerptOf(entry, 170)}</p>
+			{by && <span class="byline">{by}</span>}
+			<time class="date" datetime={data.date.toISOString()}>{formatDate(data.date)}</time>
+		</div>
+	</a>
+)}

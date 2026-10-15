@@ -4,12 +4,12 @@ import Base from '../layouts/Base.astro';
 <Base title="Търсене">
 	<link slot="head" href="/pagefind/pagefind-ui.css" rel="stylesheet" />
 	<div class="wrap">
-		<header class="page-head">
-			<span class="eyebrow">Търсене</span>
-			<h1>Търсене в преводите</h1>
+		<header class="page-head panel">
+			<span class="kicker">Търсене</span>
+			<h1>Търсене</h1>
 			<p>Търси по дума или израз в заглавията и в пълния текст на всички преводи.</p>
 		</header>
-		<div class="panel search-box" id="search"></div>
+		<div class="search-box panel" id="search"></div>
 	</div>
 	<script is:inline src="/pagefind/pagefind-ui.js"></script>
 	<script is:inline>

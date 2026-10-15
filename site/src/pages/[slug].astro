@@ -1,93 +1,130 @@
 ---
 import { getEntry, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import Icon from '../components/Icon.astro';
-import { excerptOf, formatDate, getTranslations, readingTime, slugify } from '../lib/utils';
+import Cover from '../components/Cover.astro';
+import { excerptOf, formatDate, getTranslations, slugify } from '../lib/utils';
 
 export async function getStaticPaths() {
 	const all = await getTranslations();
-	// Newest first, so "previous" is the older neighbour and "next" the newer one.
+	// Newest first, so "older" is the next item in the list and "newer" the previous.
 	return all.map((entry, i) => ({
 		params: { slug: entry.id },
-		props: { entry, older: all[i + 1], newer: all[i - 1] },
+		props: { entry, all, older: all[i + 1], newer: all[i - 1] },
 	}));
 }
 
-const { entry, older, newer } = Astro.props;
+const { entry, all, older, newer } = Astro.props;
 const { data } = entry;
 const { Content } = await render(entry);
 const teacher = data.teacher ? await getEntry(data.teacher) : undefined;
+
+// Sidebar: more by the same teacher first, then the latest translations.
+const others = all.filter((t) => t.id !== entry.id);
+const sameTeacher = teacher ? others.filter((t) => t.data.teacher?.id === teacher.id) : [];
+const more = [...sameTeacher, ...others.filter((t) => !sameTeacher.includes(t))].slice(0, 5);
+const moreNames = new Map(
+	await Promise.all(
+		more.map(async (t) => [t.id, t.data.teacher ? (await getEntry(t.data.teacher))?.data.name : undefined] as const)
+	)
+);
 ---
 <Base title={data.title} description={excerptOf(entry, 160)}>
-	<article class="wrap" data-pagefind-body>
-		<header class="article-head">
-			{data.tradition && <span class="eyebrow" data-pagefind-filter="традиция">{data.tradition}</span>}
-			<h1 data-pagefind-meta="title">{data.title}</h1>
-			{data.subtitle && <p class="subtitle">{data.subtitle}</p>}
-			<div class="meta">
-				{teacher && (
-					<a class="byline" href={`/uchiteli/${teacher.id}/`}>
-						<span class="avatar">{teacher.data.name.charAt(0)}</span>
-						<span>{teacher.data.name}</span>
-					</a>
-				)}
-				{teacher && <span class="dot" />}
-				<time datetime={data.date.toISOString()}>{formatDate(data.date)}</time>
-				<span class="dot" />
-				<span>{readingTime(entry.body)} мин четене</span>
+	<div class="wrap">
+		<article class="article panel" data-pagefind-body>
+			<header class="article-head">
+				<span class="kicker">
+					<a href="/prevodi/">Превод</a>
+					{data.tradition && <><span class="sep">|</span><span data-pagefind-filter="традиция">{data.tradition}</span></>}
+					{data.original_language && <><span class="sep">|</span>от {data.original_language.toLowerCase()}</>}
+				</span>
+				<h1 data-pagefind-meta="title">{data.title}</h1>
+				{data.subtitle && <p class="subtitle">{data.subtitle}</p>}
+				<div class="byline">
+					{teacher && <a href={`/uchiteli/${teacher.id}/`}>{teacher.data.name}</a>}
+					{teacher && ' · '}превод: {data.translator}
+				</div>
+			</header>
+
+			{data.cover && (
+				<div class="article-cover" data-pagefind-ignore>
+					<Cover tradition={data.tradition} image={data.cover} />
+				</div>
+			)}
+
+			<div class="article-body">
+				<div class="tools" data-pagefind-ignore>
+					<button type="button" data-size="1" aria-label="По-голям текст">А+</button>
+					<button type="button" data-size="-1" aria-label="По-малък текст">А−</button>
+					<button type="button" data-font aria-pressed="false" aria-label="Шрифт без серифи">Аа</button>
+				</div>
+
+				<div>
+					<div class="prose dropcap" id="prose">
+						<Content />
+					</div>
+
+					<dl class="source-box" data-pagefind-ignore>
+						<div><dt>Превод</dt><dd>{data.translator}</dd></div>
+						{teacher && <div><dt>Автор</dt><dd><a href={`/uchiteli/${teacher.id}/`}>{teacher.data.name}</a></dd></div>}
+						{data.original_language && <div><dt>Оригинал</dt><dd>{data.original_language}</dd></div>}
+						<div><dt>Публикуван</dt><dd>{formatDate(data.date)}</dd></div>
+						{data.source && <div><dt>Източник</dt><dd><a href={data.source} rel="noopener">{new URL(data.source).hostname}</a></dd></div>}
+					</dl>
+
+					{data.tags.length > 0 && (
+						<div class="article-tags" data-pagefind-ignore>
+							{data.tags.map((tag) => <a class="tag" href={`/temi/${slugify(tag)}/`}>{tag}</a>)}
+						</div>
+					)}
+				</div>
+
+				<aside class="sidebar" data-pagefind-ignore>
+					<h2>Още преводи</h2>
+					<p class="sidebar-sub">{sameTeacher.length > 0 && teacher ? `Още от ${teacher.data.name}` : 'Последно публикувани'}</p>
+					<ol class="numbered">
+						{more.map((t) => (
+							<li>
+								<a href={`/${t.id}/`}>
+									<span>
+										<strong>{t.data.title}</strong>
+										{moreNames.get(t.id) && <span>{moreNames.get(t.id)}</span>}
+									</span>
+								</a>
+							</li>
+						))}
+					</ol>
+				</aside>
 			</div>
-		</header>
+		</article>
 
-		<div class="reader-tools" data-pagefind-ignore>
-			<button type="button" data-size="-1" aria-label="По-малък текст">А−</button>
-			<button type="button" data-size="1" aria-label="По-голям текст">А+</button>
-			<button type="button" data-font aria-pressed="false">Без серифи</button>
-		</div>
-
-		<div class="prose" id="prose">
-			<Content />
-		</div>
-
-		<dl class="source-box" data-pagefind-ignore>
-			<div><dt>Превод</dt><dd>{data.translator}</dd></div>
-			{teacher && <div><dt>Автор</dt><dd><a href={`/uchiteli/${teacher.id}/`}>{teacher.data.name}</a></dd></div>}
-			{data.original_language && <div><dt>Оригинал</dt><dd>{data.original_language}</dd></div>}
-			{data.source && <div><dt>Източник</dt><dd><a href={data.source} rel="noopener">{new URL(data.source).hostname}</a></dd></div>}
-		</dl>
-
-		{data.tags.length > 0 && (
-			<div class="article-tags pill-row" data-pagefind-ignore>
-				{data.tags.map((tag) => <a class="pill" href={`/temi/${slugify(tag)}/`}>{tag}</a>)}
-			</div>
-		)}
-
-		<nav class="prev-next" aria-label="Други преводи" data-pagefind-ignore>
+		<nav class="prev-next" aria-label="Други преводи">
 			{older && (
-				<a href={`/${older.id}/`}>
-					<span><Icon name="arrow-left" size={14} /> По-стар превод</span>
+				<a class="panel" href={`/${older.id}/`}>
+					<span>‹ По-стар превод</span>
 					<strong>{older.data.title}</strong>
 				</a>
 			)}
 			{newer && (
-				<a class="next" href={`/${newer.id}/`}>
-					<span>По-нов превод <Icon name="arrow-right" size={14} /></span>
+				<a class="panel next" href={`/${newer.id}/`}>
+					<span>По-нов превод ›</span>
 					<strong>{newer.data.title}</strong>
 				</a>
 			)}
 		</nav>
-	</article>
+	</div>
 </Base>
 
 <script>
 	const prose = document.getElementById('prose')!;
 	const root = document.documentElement;
-	const sizes = [1.05, 1.15, 1.25, 1.4, 1.55];
+	const sizes = [1.0, 1.1, 1.2, 1.32, 1.45];
 	let size = 2;
 	let font = 'serif';
 	try {
 		size = Number(localStorage.getItem('reading-size') ?? 2);
 		font = localStorage.getItem('reading-font') ?? 'serif';
 	} catch {}
+	if (!(size >= 0 && size < sizes.length)) size = 2;
 	const fontBtn = document.querySelector<HTMLButtonElement>('[data-font]')!;
 	const apply = () => {
 		root.style.setProperty('--reading-size', sizes[size] + 'rem');

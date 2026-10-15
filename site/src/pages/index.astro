@@ -1,88 +1,89 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import Cover from '../components/Cover.astro';
-import TranslationCard from '../components/TranslationCard.astro';
-import TeacherCard from '../components/TeacherCard.astro';
-import Icon from '../components/Icon.astro';
-import { excerptOf, formatDate, getTranslations, readingTime, slugify } from '../lib/utils';
+import Story from '../components/Story.astro';
+import { getTranslations, slugify } from '../lib/utils';
+import { verses } from '../data/verses';
 
 const translations = await getTranslations();
 const featured = translations.find((t) => t.data.featured) ?? translations[0];
-const latest = translations.filter((t) => t !== featured).slice(0, 6);
-const teachers = await getCollection('teachers');
-const featuredTeacher = teachers.find((t) => t.id === featured?.data.teacher?.id);
+const rest = translations.filter((t) => t !== featured);
+const seconds = rest.slice(0, 2);
+const headlines = rest.slice(2, 6);
+const rows = rest.slice(0, 5);
+const teachers = (await getCollection('teachers')).sort((a, b) => a.data.name.localeCompare(b.data.name, 'bg'));
+const count = (id: string) => translations.filter((t) => t.data.teacher?.id === id).length;
 
-const countBy = (pick: (t: (typeof translations)[number]) => string[]) => {
-	const counts = new Map<string, number>();
-	translations.forEach((t) => pick(t).forEach((k) => counts.set(k, (counts.get(k) ?? 0) + 1)));
-	return counts;
-};
-const tags = [...countBy((t) => t.data.tags)].sort((a, b) => b[1] - a[1]).slice(0, 14);
-const perTeacher = countBy((t) => (t.data.teacher ? [t.data.teacher.id] : []));
+const tagCounts = new Map<string, number>();
+translations.forEach((t) => t.data.tags.forEach((tag) => tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1)));
+const tags = [...tagCounts].sort((a, b) => b[1] - a[1]).slice(0, 16);
+const verse = verses[0];
 ---
 <Base>
-	<section class="hero">
-		<div class="wrap">
-			<div class="hero-intro">
-				<span class="eyebrow">Будистки текстове на български</span>
-				<h1>Думите на Дхармата, преведени с грижа.</h1>
-				<p>Сутри, учения и коментари от различни традиции, преведени на български език и достъпни свободно за всички.</p>
-			</div>
-
-			{featured && (
-				<a class="feature" href={`/${featured.id}/`}>
-					<div class="feature-body">
-						<span class="eyebrow">Препоръчан превод{featured.data.tradition && ` · ${featured.data.tradition}`}</span>
-						<h2>{featured.data.title}</h2>
-						<p>{excerptOf(featured, 220)}</p>
-						<div class="meta">
-							{featuredTeacher && <span>{featuredTeacher.data.name}</span>}
-							{featuredTeacher && <span class="dot" />}
-							<span>{formatDate(featured.data.date)}</span>
-							<span class="dot" />
-							<span>{readingTime(featured.body)} мин четене</span>
-						</div>
-						<span><span class="btn btn-primary">Започни да четеш <Icon name="arrow-right" size={16} /></span></span>
-					</div>
-					<Cover title={featured.data.title} tradition={featured.data.tradition} image={featured.data.cover} />
-				</a>
-			)}
-		</div>
-	</section>
-
-	<section class="section">
-		<div class="wrap">
-			<div class="section-head">
-				<h2>Последни преводи</h2>
-				<a class="btn" href="/prevodi/">Всички <Icon name="arrow-right" size={16} /></a>
-			</div>
-			<div class="grid">
-				{latest.map((entry) => <TranslationCard entry={entry} />)}
-			</div>
-		</div>
-	</section>
-
-	<section class="section">
-		<div class="wrap two-col">
-			<div>
-				<div class="section-head">
-					<h2>Учители</h2>
-					<a class="btn" href="/uchiteli/">Всички <Icon name="arrow-right" size={16} /></a>
-				</div>
-				<div class="teacher-grid">
-					{teachers.slice(0, 6).map((t) => <TeacherCard teacher={t} count={perTeacher.get(t.id) ?? 0} />)}
+	<div class="wrap">
+		<section class="lead">
+			<div class="lead-main panel">
+				{featured && <Story entry={featured} variant="lead" />}
+				<div class="second-stack">
+					{seconds.map((entry) => <Story entry={entry} variant="second" />)}
 				</div>
 			</div>
-			<aside class="panel">
-				<span class="eyebrow">Разгледай по тема</span>
-				<h3 style="font-size:1.6rem;margin:8px 0 18px">Теми</h3>
-				<div class="pill-row">
-					{tags.map(([tag, n]) => (
-						<a class="pill" href={`/temi/${slugify(tag)}/`}>{tag} <span class="count">{n}</span></a>
-					))}
-				</div>
+			<aside class="headlines panel">
+				{headlines.map((entry) => <Story entry={entry} variant="headline" />)}
+				<a class="btn" href="/prevodi/">Виж още</a>
 			</aside>
+		</section>
+
+		<section class="verse-row">
+			<figure class="verse" id="verse" style="margin:0" data-verses={JSON.stringify(verses)}>
+				<span class="verse-tab">Стих на деня</span>
+				<span class="verse-mark" aria-hidden="true">“</span>
+				<blockquote>{verse.text}</blockquote>
+				<figcaption>– <a href={verse.href}>{verse.source}</a></figcaption>
+			</figure>
+			<aside class="side-box panel">
+				<h2>Учители</h2>
+				<span class="date">Автори на преведените текстове</span>
+				<ul class="side-list">
+					{teachers.slice(0, 5).map((t) => (
+						<li>
+							<a href={`/uchiteli/${t.id}/`}>
+								<strong>{t.data.name}</strong>
+								<span>{t.data.tradition} · {count(t.id)} {count(t.id) === 1 ? 'превод' : 'превода'}</span>
+							</a>
+						</li>
+					))}
+				</ul>
+				<a class="btn" href="/uchiteli/">Всички учители</a>
+				<a class="btn btn-solid" href="/temi/">Разгледай по тема</a>
+			</aside>
+		</section>
+
+		<h2 class="section-title">Преводи</h2>
+		<p class="section-sub">Сутри, учения и коментари, преведени на български</p>
+		<div class="rows">
+			{rows.map((entry) => <Story entry={entry} variant="row" />)}
 		</div>
-	</section>
+		<div class="btn-row"><a class="btn btn-plum" href="/prevodi/">Всички преводи</a></div>
+
+		<hr class="section-rule" />
+		<h2 class="section-title">Теми</h2>
+		<p class="section-sub">Разгледайте преводите по тема</p>
+		<div class="topic-list panel">
+			{tags.map(([tag, n]) => <a href={`/temi/${slugify(tag)}/`}>{tag}<span class="count">{n}</span></a>)}
+		</div>
+	</div>
 </Base>
+
+<script>
+	// Pick a passage by day of the year, so it changes daily without rebuilding.
+	const box = document.getElementById('verse')!;
+	const verses = JSON.parse(box.dataset.verses!);
+	const start = new Date(new Date().getFullYear(), 0, 0).getTime();
+	const day = Math.floor((Date.now() - start) / 86400000);
+	const v = verses[day % verses.length];
+	box.querySelector('blockquote')!.textContent = v.text;
+	const link = box.querySelector('figcaption a') as HTMLAnchorElement;
+	link.textContent = v.source;
+	link.href = v.href;
+</script>
