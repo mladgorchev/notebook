@@ -1,18 +1,18 @@
 ---
-// One translation shown in one of the editorial layouts used across the site.
+// One translation shown in one of the layouts used across the site.
 import { getEntry } from 'astro:content';
 import Cover from './Cover.astro';
-import { excerptOf, formatDate, type Translation } from '../lib/utils';
+import { excerptOf, publishedLabel, slugify, type Translation } from '../lib/utils';
 
 interface Props {
 	entry: Translation;
-	variant: 'lead' | 'second' | 'headline' | 'row';
+	variant: 'lead' | 'second' | 'headline' | 'card';
 }
 const { entry, variant } = Astro.props;
 const { data } = entry;
 const teacher = data.teacher ? await getEntry(data.teacher) : undefined;
 const href = `/${entry.id}/`;
-const by = teacher ? teacher.data.name : undefined;
+const by = teacher?.data.name;
 ---
 {variant === 'lead' && (
 	<a class="lead-story" href={href}>
@@ -28,8 +28,10 @@ const by = teacher ? teacher.data.name : undefined;
 {variant === 'second' && (
 	<a class="second-story" href={href}>
 		<Cover tradition={data.tradition} image={data.cover} />
-		<h3>{data.title}</h3>
-		{by && <span class="byline">{by}</span>}
+		<div>
+			<h3>{data.title}</h3>
+			{by && <span class="byline">{by}</span>}
+		</div>
 	</a>
 )}
 {variant === 'headline' && (
@@ -39,18 +41,27 @@ const by = teacher ? teacher.data.name : undefined;
 		{by && <span class="byline">{by}</span>}
 	</a>
 )}
-{variant === 'row' && (
-	<a class="row-story panel" href={href}>
-		<div class="row-label">
-			{data.tradition && <span class="kicker">{data.tradition}</span>}
-			{data.tags.slice(0, 3).join(', ')}
+{variant === 'card' && (
+	<article class="card panel">
+		<div class="card-text">
+			<a class="card-title" href={href}>{data.title}</a>
+			<div class="card-sub">
+				{[by, data.subtitle].filter(Boolean).join(' · ')}
+			</div>
+			<p>{excerptOf(entry, 260)}</p>
+			<div class="card-foot">
+				<span><b>Превод:</b> {data.translator}</span>
+				<span><b>Публикуван:</b> {publishedLabel(data.date)}</span>
+			</div>
 		</div>
-		<Cover tradition={data.tradition} image={data.cover} />
-		<div>
-			<h3>{data.title}</h3>
-			<p>{excerptOf(entry, 170)}</p>
-			{by && <span class="byline">{by}</span>}
-			<time class="date" datetime={data.date.toISOString()}>{formatDate(data.date)}</time>
-		</div>
-	</a>
+		<a href={href} tabindex="-1" aria-hidden="true"><Cover tradition={data.tradition} image={data.cover} /></a>
+		<dl class="facts">
+			{data.tradition && <div><dt>Традиция</dt><dd>{data.tradition}</dd></div>}
+			{teacher && <div><dt>Учител</dt><dd><a href={`/uchiteli/${teacher.id}/`}>{teacher.data.name}</a></dd></div>}
+			{data.original_language && <div><dt>Оригинал</dt><dd>{data.original_language}</dd></div>}
+			{data.tags.length > 0 && (
+				<div><dt>Теми</dt><dd>{data.tags.slice(0, 4).map((tag) => <a href={`/temi/${slugify(tag)}/`}>{tag}</a>)}</dd></div>
+			)}
+		</dl>
+	</article>
 )}

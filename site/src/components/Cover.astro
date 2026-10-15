@@ -1,21 +1,15 @@
 ---
-// A text's cover image, or a flat panel in the tradition's colour with an emblem.
+// A text's cover image, or a flat panel in the tradition's pigment with an emblem.
 import Icon from './Icon.astro';
+import { pigmentFor } from '../lib/utils';
 
 interface Props {
 	tradition?: string;
 	image?: string;
+	initial?: string;
 }
-const { tradition, image } = Astro.props;
-
-const hues: Record<string, string> = {
-	'Тхеравада': '#b8611c',
-	'Махаяна': '#801c4a',
-	'Ваджраяна': '#21409a',
-	'Дзен': '#006176',
-};
-const hue = (tradition && hues[tradition]) || '#5a4a3f';
+const { tradition, image, initial } = Astro.props;
 ---
-<div class="cover" style={`--hue: ${hue}`}>
-	{image ? <img src={image} alt="" loading="lazy" /> : <Icon name="wheel" size={64} />}
+<div class="cover" style={`--hue: ${pigmentFor(tradition)}`}>
+	{image ? <img src={image} alt="" loading="lazy" /> : initial ? <span>{initial}</span> : <Icon name="wheel" size={64} />}
 </div>

@@ -1,43 +1,50 @@
 ---
 import Icon from './Icon.astro';
+import Seal from './Seal.astro';
 
 const sections = [
 	{ href: '/prevodi/', label: 'Преводи' },
 	{ href: '/uchiteli/', label: 'Учители' },
 	{ href: '/temi/', label: 'Теми' },
-	{ href: '/tarsene/', label: 'Търсене' },
 	{ href: '/za-nas/', label: 'За нас' },
 ];
 const path = Astro.url.pathname.replace(/\/?$/, '/');
 ---
 <header class="site-header">
-	<div class="wrap">
-		<div class="masthead">
-			<div class="masthead-left">
-				<button class="icon-btn menu-toggle" id="menu-toggle" type="button" aria-label="Меню" aria-controls="site-sections" aria-expanded="false">
-					<Icon name="menu" size={24} />
-				</button>
-				<a class="icon-btn" href="/tarsene/" aria-label="Търсене"><Icon name="search" /></a>
-				<a class="text-link" href="/za-nas/">За нас</a>
-			</div>
-			<a class="brand" href="/">
-				<span class="brand-tag">Будистки текстове на български</span>
+	<div class="wrap topbar">
+		<a class="brand" href="/">
+			<Seal />
+			<span>
 				<span class="brand-name">Дхарма Слово</span>
-			</a>
-			<div class="masthead-right">
-				<button class="icon-btn" id="theme-toggle" type="button" aria-label="Светла или тъмна тема">
-					<span class="theme-dark"><Icon name="moon" /></span>
-					<span class="theme-light" hidden><Icon name="sun" /></span>
-				</button>
-				<a class="btn btn-solid" href="/prevodi/">Всички преводи</a>
-			</div>
+				<span class="brand-tag">Будистки текстове на български</span>
+			</span>
+		</a>
+		<div class="topbar-right">
+			<nav class="toplinks" aria-label="Бързи връзки">
+				<a href="/za-nas/">За проекта</a>
+				<a href="/rss.xml">RSS</a>
+			</nav>
+			<button class="icon-btn" id="theme-toggle" type="button" aria-label="Светла или тъмна тема">
+				<span class="theme-dark"><Icon name="moon" /></span>
+				<span class="theme-light" hidden><Icon name="sun" /></span>
+			</button>
+			<a class="btn btn-solid" href="/prevodi/">Всички преводи</a>
+			<button class="icon-btn menu-toggle" id="menu-toggle" type="button" aria-label="Меню" aria-controls="navbar" aria-expanded="false">
+				<Icon name="menu" size={24} />
+			</button>
 		</div>
-		<nav class="sections" id="site-sections" aria-label="Раздели">
-			{sections.map((s) => (
-				<a href={s.href} aria-current={path.startsWith(s.href) ? 'page' : undefined}>{s.label}</a>
-			))}
-		</nav>
 	</div>
+	<div class="navbar" id="navbar">
+		<div class="wrap">
+			<a class="search-link" href="/tarsene/"><Icon name="search" size={16} /> Търсене в преводите</a>
+			<nav class="sections" aria-label="Раздели">
+				{sections.map((s) => (
+					<a href={s.href} aria-current={path.startsWith(s.href) ? 'page' : undefined}>{s.label}</a>
+				))}
+			</nav>
+		</div>
+	</div>
+	<div class="tagline">Сутри, учения и коментари, преведени на български език</div>
 </header>
 
 <script>
@@ -58,7 +65,7 @@ const path = Astro.url.pathname.replace(/\/?$/, '/');
 	});
 
 	const menu = document.getElementById('menu-toggle')!;
-	const nav = document.getElementById('site-sections')!;
+	const nav = document.getElementById('navbar')!;
 	menu.addEventListener('click', () => {
 		const open = nav.dataset.open !== 'true';
 		nav.dataset.open = String(open);

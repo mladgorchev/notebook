@@ -14,7 +14,7 @@ const tags = [...counts].sort((a, b) => a[0].localeCompare(b[0], 'bg'));
 			<p>Всички теми, по които са подредени преводите.</p>
 		</header>
 		<div class="topic-list panel" style="margin-top:20px">
-			{tags.map(([tag, n]) => <a href={`/temi/${slugify(tag)}/`}>{tag}<span class="count">{n}</span></a>)}
+			{tags.map(([tag, n]) => <a class="topic" href={`/temi/${slugify(tag)}/`}>{tag}<span class="count">{n}</span></a>)}
 		</div>
 	</div>
 </Base>

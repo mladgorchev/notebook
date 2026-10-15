@@ -1,31 +1,28 @@
 ---
+import Icon from './Icon.astro';
+import Seal from './Seal.astro';
+
 const year = new Date().getFullYear();
 ---
+<section class="follow">
+	<div class="wrap">
+		<strong>Следете новите преводи</strong>
+		<a class="btn" href="/rss.xml"><Icon name="rss" size={16} /> RSS абонамент</a>
+	</div>
+</section>
 <footer class="site-footer">
 	<div class="wrap">
-		<div class="footer-grid">
-			<div>
-				<span class="footer-brand">Дхарма Слово</span>
-				<p class="footer-quote">„Подаръкът на Дхармата превъзхожда всички подаръци.“</p>
-				<span>Дхаммапада, 354</span>
-			</div>
-			<div>
-				<h4>Четене</h4>
-				<ul>
-					<li><a href="/prevodi/">Всички преводи</a></li>
-					<li><a href="/uchiteli/">Учители</a></li>
-					<li><a href="/temi/">Теми</a></li>
-					<li><a href="/tarsene/">Търсене</a></li>
-				</ul>
-			</div>
-			<div>
-				<h4>Проектът</h4>
-				<ul>
-					<li><a href="/za-nas/">За нас</a></li>
-					<li><a href="/rss.xml">RSS абонамент</a></li>
-				</ul>
-			</div>
+		<Seal />
+		<nav class="footer-links" aria-label="Долно меню">
+			<a href="/prevodi/">Преводи</a>
+			<a href="/uchiteli/">Учители</a>
+			<a href="/temi/">Теми</a>
+			<a href="/tarsene/">Търсене</a>
+			<a href="/za-nas/">За нас</a>
+		</nav>
+		<div class="footer-copy">
+			© {year} Дхарма Слово<br />
+			Преводите са собственост на своите преводачи.
 		</div>
-		<div class="footer-bottom">© {year} Дхарма Слово. Преводи на будистки текстове на български език.</div>
 	</div>
 </footer>
