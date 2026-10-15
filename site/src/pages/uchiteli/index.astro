@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import TeacherCard from '../../components/TeacherCard.astro';
+import { getTranslations } from '../../lib/utils';
+
+const teachers = (await getCollection('teachers')).sort((a, b) => a.data.name.localeCompare(b.data.name, 'bg'));
+const translations = await getTranslations();
+const count = (id: string) => translations.filter((t) => t.data.teacher?.id === id).length;
+
+const byTradition = new Map<string, typeof teachers>();
+for (const t of teachers) {
+	const key = t.data.tradition ?? 'Други';
+	byTradition.set(key, [...(byTradition.get(key) ?? []), t]);
+}
+---
+<Base title="Учители" description="Учителите и авторите, чиито текстове са преведени в Дхарма Слово.">
+	<div class="wrap">
+		<header class="page-head">
+			<span class="eyebrow">Животописи</span>
+			<h1>Учители и автори</h1>
+			<p>Кратки животописи на учителите, чиито думи са преведени тук, подредени по традиция.</p>
+		</header>
+		{[...byTradition].map(([tradition, list]) => (
+			<section class="section" style="padding-top:0">
+				<div class="section-head"><h2>{tradition}</h2></div>
+				<div class="teacher-grid">
+					{list.map((t) => <TeacherCard teacher={t} count={count(t.id)} />)}
+				</div>
+			</section>
+		))}
+	</div>
+</Base>

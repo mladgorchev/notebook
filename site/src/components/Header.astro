@@ -1,0 +1,62 @@
+---
+import Icon from './Icon.astro';
+
+const links = [
+	{ href: '/', label: 'Начало' },
+	{ href: '/prevodi/', label: 'Преводи' },
+	{ href: '/uchiteli/', label: 'Учители' },
+	{ href: '/temi/', label: 'Теми' },
+	{ href: '/za-nas/', label: 'За нас' },
+];
+const path = Astro.url.pathname.replace(/\/?$/, '/');
+const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+<header class="site-header">
+	<div class="wrap">
+		<a class="brand" href="/">
+			<span class="brand-mark"><Icon name="wheel" size={22} /></span>
+			<span class="brand-name">Дхарма Слово</span>
+		</a>
+		<nav class="nav" id="site-nav" aria-label="Основно меню">
+			{links.map((l) => (
+				<a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a>
+			))}
+		</nav>
+		<div class="header-actions">
+			<a class="btn btn-icon" href="/tarsene/" aria-label="Търсене"><Icon name="search" /></a>
+			<button class="btn btn-icon" id="theme-toggle" type="button" aria-label="Светла или тъмна тема">
+				<span class="theme-dark"><Icon name="moon" /></span>
+				<span class="theme-light" hidden><Icon name="sun" /></span>
+			</button>
+			<button class="btn btn-icon menu-toggle" id="menu-toggle" type="button" aria-label="Меню" aria-controls="site-nav" aria-expanded="false">
+				<Icon name="menu" />
+			</button>
+		</div>
+	</div>
+</header>
+
+<script>
+	const root = document.documentElement;
+	const btn = document.getElementById('theme-toggle')!;
+	const isDark = () =>
+		root.dataset.theme === 'dark' ||
+		(!root.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+	const sync = () => {
+		btn.querySelector<HTMLElement>('.theme-dark')!.hidden = isDark();
+		btn.querySelector<HTMLElement>('.theme-light')!.hidden = !isDark();
+	};
+	sync();
+	btn.addEventListener('click', () => {
+		root.dataset.theme = isDark() ? 'light' : 'dark';
+		try { localStorage.setItem('theme', root.dataset.theme); } catch {}
+		sync();
+	});
+
+	const menu = document.getElementById('menu-toggle')!;
+	const nav = document.getElementById('site-nav')!;
+	menu.addEventListener('click', () => {
+		const open = nav.dataset.open !== 'true';
+		nav.dataset.open = String(open);
+		menu.setAttribute('aria-expanded', String(open));
+	});
+</script>

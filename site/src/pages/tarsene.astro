@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Търсене">
+	<link slot="head" href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+	<div class="wrap">
+		<header class="page-head">
+			<span class="eyebrow">Търсене</span>
+			<h1>Търсене в преводите</h1>
+			<p>Търси по дума или израз в заглавията и в пълния текст на всички преводи.</p>
+		</header>
+		<div class="panel search-box" id="search"></div>
+	</div>
+	<script is:inline src="/pagefind/pagefind-ui.js"></script>
+	<script is:inline>
+		window.addEventListener('DOMContentLoaded', () => {
+			if (!window.PagefindUI) {
+				document.getElementById('search').textContent = 'Търсенето работи след изграждане на сайта (npm run build).';
+				return;
+			}
+			new PagefindUI({
+				element: '#search',
+				showSubResults: true,
+				translations: {
+					placeholder: 'Търсене…',
+					clear_search: 'Изчисти',
+					load_more: 'Още резултати',
+					zero_results: 'Няма резултати за [SEARCH_TERM]',
+					many_results: '[COUNT] резултата за [SEARCH_TERM]',
+					one_result: '1 резултат за [SEARCH_TERM]',
+					filters: 'Филтри',
+				},
+			});
+			const q = new URLSearchParams(location.search).get('q');
+			if (q) {
+				const input = document.querySelector('.pagefind-ui__search-input');
+				input.value = q;
+				input.dispatchEvent(new Event('input'));
+			}
+		});
+	</script>
+</Base>

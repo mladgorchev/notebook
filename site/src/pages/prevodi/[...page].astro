@@ -1,0 +1,26 @@
+---
+import type { GetStaticPaths, Page } from 'astro';
+import Base from '../../layouts/Base.astro';
+import TranslationCard from '../../components/TranslationCard.astro';
+import Pagination from '../../components/Pagination.astro';
+import { getTranslations, type Translation } from '../../lib/utils';
+
+export const getStaticPaths = (async ({ paginate }) => {
+	return paginate(await getTranslations(), { pageSize: 9 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props as { page: Page<Translation> };
+---
+<Base title="Преводи">
+	<div class="wrap">
+		<header class="page-head">
+			<span class="eyebrow">Библиотека</span>
+			<h1>Всички преводи</h1>
+			<p>{page.total} текста, подредени от най-новия. Можете да ги разглеждате и по <a href="/uchiteli/">учител</a> или по <a href="/temi/">тема</a>.</p>
+		</header>
+		<div class="grid">
+			{page.data.map((entry) => <TranslationCard entry={entry} />)}
+		</div>
+		<Pagination current={page.currentPage} last={page.lastPage} base="/prevodi/" />
+	</div>
+</Base>

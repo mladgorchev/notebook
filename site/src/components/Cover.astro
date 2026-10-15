@@ -1,0 +1,30 @@
+---
+// A text's cover image, or a generated tinted panel when it has none.
+interface Props {
+	title: string;
+	tradition?: string;
+	image?: string;
+	class?: string;
+}
+const { title, tradition, image, class: className } = Astro.props;
+
+const hues: Record<string, string> = {
+	'Тхеравада': '#b0681f',
+	'Махаяна': '#8b2e1e',
+	'Ваджраяна': '#34506f',
+	'Дзен': '#4d6148',
+};
+const hue = (tradition && hues[tradition]) || '#6e5a45';
+const glyph = title.replace(/^[^\p{L}]+/u, '').charAt(0);
+---
+<div class:list={['cover', className]} style={`--hue: ${hue}`}>
+	{image ? (
+		<img src={image} alt="" loading="lazy" />
+	) : (
+		<>
+			<span class="cover-ring" />
+			<span class="cover-ring" />
+			<span class="cover-glyph" aria-hidden="true">{glyph}</span>
+		</>
+	)}
+</div>

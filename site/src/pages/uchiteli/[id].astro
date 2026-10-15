@@ -1,0 +1,44 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import TranslationCard from '../../components/TranslationCard.astro';
+import { getTranslations } from '../../lib/utils';
+
+export async function getStaticPaths() {
+	const teachers = await getCollection('teachers');
+	return teachers.map((teacher) => ({ params: { id: teacher.id }, props: { teacher } }));
+}
+
+const { teacher } = Astro.props;
+const { data } = teacher;
+const { Content } = await render(teacher);
+const works = (await getTranslations()).filter((t) => t.data.teacher?.id === teacher.id);
+---
+<Base title={data.name} description={data.summary}>
+	<div class="wrap">
+		<header class="page-head" style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
+			<span class="avatar" style="width:96px;height:96px;font-size:2.6rem">
+				{data.portrait ? <img src={data.portrait} alt="" /> : data.name.charAt(0)}
+			</span>
+			<div>
+				<span class="eyebrow">{data.tradition}</span>
+				<h1>{data.name}</h1>
+				<div class="pill-row">
+					{data.dates && <span class="pill pill-saffron">{data.dates}</span>}
+					{data.region && <span class="pill">{data.region}</span>}
+					<span class="pill">{works.length} {works.length === 1 ? 'превод' : 'превода'}</span>
+				</div>
+			</div>
+		</header>
+		<div class="prose" style="margin:0">
+			<p><strong>{data.summary}</strong></p>
+			<Content />
+		</div>
+		{works.length > 0 && (
+			<section class="section">
+				<div class="section-head"><h2>Преведени текстове</h2></div>
+				<div class="grid">{works.map((entry) => <TranslationCard entry={entry} />)}</div>
+			</section>
+		)}
+	</div>
+</Base>

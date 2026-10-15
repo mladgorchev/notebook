@@ -1,0 +1,112 @@
+---
+import { getEntry, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { excerptOf, formatDate, getTranslations, readingTime, slugify } from '../lib/utils';
+
+export async function getStaticPaths() {
+	const all = await getTranslations();
+	// Newest first, so "previous" is the older neighbour and "next" the newer one.
+	return all.map((entry, i) => ({
+		params: { slug: entry.id },
+		props: { entry, older: all[i + 1], newer: all[i - 1] },
+	}));
+}
+
+const { entry, older, newer } = Astro.props;
+const { data } = entry;
+const { Content } = await render(entry);
+const teacher = data.teacher ? await getEntry(data.teacher) : undefined;
+---
+<Base title={data.title} description={excerptOf(entry, 160)}>
+	<article class="wrap" data-pagefind-body>
+		<header class="article-head">
+			{data.tradition && <span class="eyebrow" data-pagefind-filter="традиция">{data.tradition}</span>}
+			<h1 data-pagefind-meta="title">{data.title}</h1>
+			{data.subtitle && <p class="subtitle">{data.subtitle}</p>}
+			<div class="meta">
+				{teacher && (
+					<a class="byline" href={`/uchiteli/${teacher.id}/`}>
+						<span class="avatar">{teacher.data.name.charAt(0)}</span>
+						<span>{teacher.data.name}</span>
+					</a>
+				)}
+				{teacher && <span class="dot" />}
+				<time datetime={data.date.toISOString()}>{formatDate(data.date)}</time>
+				<span class="dot" />
+				<span>{readingTime(entry.body)} мин четене</span>
+			</div>
+		</header>
+
+		<div class="reader-tools" data-pagefind-ignore>
+			<button type="button" data-size="-1" aria-label="По-малък текст">А−</button>
+			<button type="button" data-size="1" aria-label="По-голям текст">А+</button>
+			<button type="button" data-font aria-pressed="false">Без серифи</button>
+		</div>
+
+		<div class="prose" id="prose">
+			<Content />
+		</div>
+
+		<dl class="source-box" data-pagefind-ignore>
+			<div><dt>Превод</dt><dd>{data.translator}</dd></div>
+			{teacher && <div><dt>Автор</dt><dd><a href={`/uchiteli/${teacher.id}/`}>{teacher.data.name}</a></dd></div>}
+			{data.original_language && <div><dt>Оригинал</dt><dd>{data.original_language}</dd></div>}
+			{data.source && <div><dt>Източник</dt><dd><a href={data.source} rel="noopener">{new URL(data.source).hostname}</a></dd></div>}
+		</dl>
+
+		{data.tags.length > 0 && (
+			<div class="article-tags pill-row" data-pagefind-ignore>
+				{data.tags.map((tag) => <a class="pill" href={`/temi/${slugify(tag)}/`}>{tag}</a>)}
+			</div>
+		)}
+
+		<nav class="prev-next" aria-label="Други преводи" data-pagefind-ignore>
+			{older && (
+				<a href={`/${older.id}/`}>
+					<span><Icon name="arrow-left" size={14} /> По-стар превод</span>
+					<strong>{older.data.title}</strong>
+				</a>
+			)}
+			{newer && (
+				<a class="next" href={`/${newer.id}/`}>
+					<span>По-нов превод <Icon name="arrow-right" size={14} /></span>
+					<strong>{newer.data.title}</strong>
+				</a>
+			)}
+		</nav>
+	</article>
+</Base>
+
+<script>
+	const prose = document.getElementById('prose')!;
+	const root = document.documentElement;
+	const sizes = [1.05, 1.15, 1.25, 1.4, 1.55];
+	let size = 2;
+	let font = 'serif';
+	try {
+		size = Number(localStorage.getItem('reading-size') ?? 2);
+		font = localStorage.getItem('reading-font') ?? 'serif';
+	} catch {}
+	const fontBtn = document.querySelector<HTMLButtonElement>('[data-font]')!;
+	const apply = () => {
+		root.style.setProperty('--reading-size', sizes[size] + 'rem');
+		prose.dataset.font = font;
+		fontBtn.setAttribute('aria-pressed', String(font === 'sans'));
+		try {
+			localStorage.setItem('reading-size', String(size));
+			localStorage.setItem('reading-font', font);
+		} catch {}
+	};
+	apply();
+	document.querySelectorAll<HTMLButtonElement>('[data-size]').forEach((b) =>
+		b.addEventListener('click', () => {
+			size = Math.min(sizes.length - 1, Math.max(0, size + Number(b.dataset.size)));
+			apply();
+		})
+	);
+	fontBtn.addEventListener('click', () => {
+		font = font === 'serif' ? 'sans' : 'serif';
+		apply();
+	});
+</script>

@@ -1,0 +1,26 @@
+---
+import Base from '../../layouts/Base.astro';
+import TranslationCard from '../../components/TranslationCard.astro';
+import { getTranslations, slugify } from '../../lib/utils';
+
+export async function getStaticPaths() {
+	const all = await getTranslations();
+	const tags = new Set(all.flatMap((t) => t.data.tags));
+	return [...tags].map((tag) => ({
+		params: { tag: slugify(tag) },
+		props: { tag, entries: all.filter((t) => t.data.tags.includes(tag)) },
+	}));
+}
+
+const { tag, entries } = Astro.props;
+---
+<Base title={tag}>
+	<div class="wrap">
+		<header class="page-head">
+			<a class="eyebrow" href="/temi/" style="text-decoration:none">Теми</a>
+			<h1>{tag}</h1>
+			<p>{entries.length} {entries.length === 1 ? 'превод' : 'превода'} по тази тема.</p>
+		</header>
+		<div class="grid">{entries.map((entry) => <TranslationCard entry={entry} />)}</div>
+	</div>
+</Base>
